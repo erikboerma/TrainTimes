@@ -1,0 +1,23 @@
+#homePageTitle {
+    text-align: center;
+}
+
+#displayGrid {
+    width: 75%;
+    background-color: aliceblue;
+    text-align: center;
+    margin: auto
+}
+
+h2 {
+    font: bolder;
+}
+
+.jumbotron {
+    margin: auto;
+}
+
+#whiteBackground {
+background-color: white;
+
+}
