@@ -55,15 +55,15 @@ database.ref().on("child_added", function (childSnapshot) {
     var firstTrainTime = childSnapshot.val().firstTrain;
     var trainFreq = childSnapshot.val().frequency;
 
-    var newRow = $("<tr>").append(
+    var newTrain = $("<tr>").append(
         $("<td>").text(trainName),
         $("<td>").text(trainDest),
-        $("<td>").text(firstTrainTime),
         $("<td>").text(trainFreq),
+        $("<td>").text(firstTrainTime),
         // $("<td>").text(minsAway)
     );
 
-    $("#employee-table > tbody").append(newRow);
+    $("#train-schedule> tbody").append(newTrain);
 });
 
 var currentTime = moment().format('LT');
