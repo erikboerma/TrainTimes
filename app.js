@@ -1,3 +1,12 @@
+setInterval(() => {
+    var currentTime = moment().format('hh:mm');
+    $("#currentTime").html(currentTime);
+}, 1000);
+
+
+
+
+
 var firebaseConfig = {
     apiKey: "AIzaSyATmp3DDnTHYyMdV58efeWPmRk15_snISY",
     authDomain: "traintimes-4be9d.firebaseapp.com",
@@ -20,7 +29,6 @@ $("#add-train-btn").on("click", function (event) {
     // Grabs user input
     var trainName = $("#train-name-input").val().trim();
     var trainDest = $("#destination-input").val().trim();
-    // need to add moment to first train time
     var firstTrainTime = $("#firstTrain-input").val().trim();
     var trainFreq = $("#frequency-input").val().trim();
 
@@ -50,24 +58,47 @@ database.ref().on("child_added", function (childSnapshot) {
     console.log(childSnapshot.val());
 
     // Store everything into a variable.
-    var trainName = childSnapshot.val().name;
-    var trainDest = childSnapshot.val().destination;
-    var firstTrainTime = childSnapshot.val().firstTrain;
-    var trainFreq = childSnapshot.val().frequency;
+    var name = childSnapshot.val().name;
+    var dest = childSnapshot.val().destination;
+    var freq = childSnapshot.val().firstTrain;
+    var first = childSnapshot.val().frequency;
 
-    var newTrain = $("<tr>").append(
-        $("<td>").text(trainName),
-        $("<td>").text(trainDest),
-        $("<td>").text(trainFreq),
-        $("<td>").text(firstTrainTime),
-        // $("<td>").text(minsAway)
+
+
+    var timeTill = first.split(":");
+    var trainTime = moment()
+        .hours(timeTill[0])
+        .minutes(timeTill[1]);
+
+    var maxMoment = moment.max(moment(), trainTime);
+    var minsAway;
+    var arrival;
+
+    if (maxMoment === trainTime) {
+        arrival = trainTime.format("hh:mm A");
+        minsAway = trainTime.diff(moment(), "minutes");
+    } else {
+
+        var differenceTimes = moment().diff(trainTime, "minutes");
+        var tRemainder = differenceTimes % freq;
+        minsAway = freq - tRemainder;
+
+        arrival = moment()
+            .add(minsAway, "m")
+            .format("hh:mm A");
+    }
+
+
+
+
+    $("#train-schedule> tbody").append(
+        $("<tr>").append(
+            $("<td>").text(name),
+            $("<td>").text(dest),
+            $("<td>").text(freq),
+            $("<td>").text(arrival),
+            $("<td>").text(minsAway)
+        )
     );
-
-    $("#train-schedule> tbody").append(newTrain);
 });
 
-var currentTime = moment().format('LT');
-$("#currentTime").text(currentTime);
-console.log(currentTime);
-
-// add current time to the page, update CSS formatting, add math for time till train.
